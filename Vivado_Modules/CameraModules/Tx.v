@@ -1,5 +1,5 @@
 
-//El Clk que estamos usando es de 125 MHz
+//We are using the 125MHz Clock
 module Tx
   (
    input       i_Clock,
