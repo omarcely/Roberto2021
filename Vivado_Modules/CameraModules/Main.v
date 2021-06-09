@@ -14,20 +14,19 @@ localparam BytesWereSended = 2'b10;
 
 ////Define Number of Bytes
 localparam BytesPerFrame = 9216;
-localparam ClockCountsPerByte = 16275;
-
+localparam ClockCountsPerByte = 11935;
+localparam  ClockCountsPerBit = 1085;
 
 wire w_Enable_Read;
 wire [7:0] w_RAM_Input;
+wire [7:0] w_RAM_Output;
 wire [14:0] w_Write_Adress;
 wire w_End_Of_Byte_Transmission;
 
 
 reg r_Enable_Write;
-reg r_Enable_Tx;
-reg [7:0] r_RAM_Output;
-reg [14:0] r_Read_Adress;
-reg [13:0]r_Byte_Count = 14'b0;
+reg r_Enable_Tx = 0;
+reg [14:0] r_Read_Adress = 15'b0;
 reg [14:0] r_Current_Clock_Count = 0;
 
 
@@ -36,7 +35,7 @@ reg [1:0]r_Next_State = Waiting;
 
 
 
-RAM20k RAM (r_RAM_Output,
+RAM20k RAM (w_RAM_Output,
             w_Write_Adress,
             r_Read_Adress,
             w_RAM_Input,
@@ -56,65 +55,89 @@ ReadImage Image (o_XLK,
 
 Tx Transmiter(i_Clk,
               r_Enable_Tx,
-              r_RAM_Output,
+              w_RAM_Output,
               o_led_Tx_Active,
               o_Tx,
               w_End_Of_Byte_Transmission);
 
 
-  always @(r_Current_State, i_VS, i_HS, r_Byte_Count) begin
+  always @(posedge i_Clk) begin
+
+    r_Current_State <= r_Next_State;
+
     case(r_Current_State)
       Waiting: begin
+        r_Current_Clock_Count <= 1'b0;
+        r_Enable_Tx <= 1'b0;
+
         if(i_VS==0)begin
           r_Next_State = Waiting;
         end
         else begin
           r_Next_State = SendingBytes;
         end
-      end
+
+      end ///End of Waiting
+
 
       SendingBytes: begin
-        if(r_Byte_Count< BytesPerFrame)begin
-          r_Next_State = SendingBytes;
+        if(r_Current_Clock_Count <  ClockCountsPerBit) begin
+          r_Current_Clock_Count <= r_Current_Clock_Count + 1;
+          r_Enable_Tx <= 1'b1;
+          r_Next_State <= SendingBytes;
         end
         else begin
-          r_Next_State = BytesWereSended;
+          if (r_Current_Clock_Count <  ClockCountsPerBit) begin
+            r_Current_Clock_Count <= r_Current_Clock_Count + 1;
+            r_Enable_Tx <= 1'b0;
+            r_Next_State <= SendingBytes;
+          end else begin
+            if (r_Read_Adress < BytesPerFrame) begin
+              r_Current_Clock_Count <= 0;
+              r_Enable_Tx <= 1'b0;
+              r_Next_State <= SendingBytes;
+            end else begin
+              r_Current_Clock_Count <= 0;
+              r_Enable_Tx <= 1'b0;
+              r_Next_State <= BytesWereSended;
+            end
+
+          end
         end
-      end
+      end  ///End of SendingBytes
+
 
       BytesWereSended: begin
+        r_Current_Clock_Count <= 1'b0;
+        r_Enable_Tx <= 1'b0;
+
         if(i_VS==1)begin
           r_Next_State = BytesWereSended;
         end
         else begin
           r_Next_State = Waiting;
         end
-      end
+      end ///End of BytesWereSended
 
     endcase
+
+
   end
 
-
-
-  always @(posedge i_Clk) begin
+  always @ (posedge w_End_Of_Byte_Transmission) begin
     case(r_Current_State)
       Waiting: begin
-        r_Byte_Count = 0;
+        r_Read_Adress <= 0;
       end
 
       SendingBytes: begin
-        if(r_Current_Clock_Count <  10850) begin
-          
-        end
-        else begin
-
-        end
+        r_Read_Adress <= r_Read_Adress + 1;
       end
 
       BytesWereSended: begin
-        r_Byte_Count = 0;
+        r_Read_Adress <= 0;
       end
-    endcase
+
   end
 
 
