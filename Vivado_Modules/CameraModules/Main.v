@@ -70,7 +70,7 @@ Tx Transmiter(i_Clk,
         r_Read_Adress <= 1'b0;
 
         if(i_VS==0)begin
-          r_Next_State = Waiting;
+          r_Next_State <= Waiting;
           r_Current_Clock_Count <= 1'b0;
           o_Frame_Indicator <= 1'b1;
         end
@@ -90,7 +90,8 @@ Tx Transmiter(i_Clk,
 
 
       SendingBytes: begin
-      o_Frame_Indicator <= 1'b0;
+        o_Frame_Indicator <= 1'b0;
+
         if(r_Current_Clock_Count <  ClockCountsPerBit) begin
           r_Current_Clock_Count <= r_Current_Clock_Count + 1;
           r_Enable_Tx <= 1'b1;
@@ -122,15 +123,18 @@ Tx Transmiter(i_Clk,
 
 
       BytesWereSended: begin
-        r_Current_Clock_Count <= 1'b0;
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
 
-        if(i_VS==1)begin
-          r_Next_State = BytesWereSended;
+        if(r_Current_Clock_Count < ClockCountsForControlSignal)begin
+          r_Next_State <= BytesWereSended;
+          r_Current_Clock_Count <= r_Current_Clock_Count + 1;
+          o_Frame_Indicator <= 0;
         end
         else begin
-          r_Next_State = Waiting;
+          r_Current_Clock_Count <= 1'b0;
+          r_Next_State <= Waiting;
+          o_Frame_Indicator <= 1;
         end
       end ///End of BytesWereSended
 
