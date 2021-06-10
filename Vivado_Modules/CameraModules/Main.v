@@ -1,11 +1,11 @@
 
-module Main(o_Tx, o_Frame_Indicator, o_led, o_XLK, i_D,  i_PLK, i_Clk, i_VS, i_HS);
+module Main(o_Tx, o_Frame_Indicator, o_led, o_XLK, i_D,  i_PLK, i_Clk, i_VS, i_HS, i_RX);
 
 input [7:0]i_D;
 output o_XLK, o_Tx;
 output reg o_Frame_Indicator;
 output [1:0]o_led;
-input i_PLK, i_Clk, i_VS, i_HS;
+input i_PLK, i_Clk, i_VS, i_HS, i_RX;
 
 ///////Define finite states
 localparam Waiting = 2'b00;

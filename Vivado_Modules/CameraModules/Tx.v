@@ -1,14 +1,13 @@
 
 //We are using the 125MHz Clock
-module Tx
-  (
-   input       i_Clock,
-   input       i_Tx_DV,
-   input [7:0] i_Tx_Byte,
-   output      o_Tx_Active,
-   output reg  o_Tx_Serial,
-   output      o_Tx_Done
-   );
+module Tx(i_Clock, i_Tx_DV, i_Tx_Byte, o_Tx_Active, o_Tx_Serial, o_Tx_Done);
+
+input       i_Clock;
+input       i_Tx_DV;
+input [7:0] i_Tx_Byte;
+output      o_Tx_Active;
+output reg  o_Tx_Serial;
+output      o_Tx_Done;
 
   parameter CLKS_PER_BIT   = 1085;//434;
   parameter s_IDLE         = 3'b000;
