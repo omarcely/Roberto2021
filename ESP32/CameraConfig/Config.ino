@@ -4,7 +4,7 @@ void setup(){
   /*Before using the code make sure you have connected the following pins of the Camera:
     Camera SCL to Microcontroler SCL pin
     Camera SDA to Microcontroler SDA pin
-    Camera RET to ESP32 Reset control pin
+    Camera RET to Logic High
     Camera PWDN to GND
     Camera 3V3 to 3,3 Volts
     Camera GND to GND
@@ -12,8 +12,11 @@ void setup(){
   */
   pinMode(22,OUTPUT);
   pinMode(23,OUTPUT);
+  pinMode(15,OUTPUT);
+  
   digitalWrite(22,HIGH);
   digitalWrite(23,HIGH);
+  digitalWrite(15,HIGH);
   Serial.begin(9600);
    if(writeRegister(0x42, 0x12, 0x80, 22, 23, 500)){
         Serial.println("The register was succesfully overrote");
