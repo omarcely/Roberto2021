@@ -10,20 +10,20 @@ void setup(){
     Camera GND to GND
     Camera XLK to 10MHZ - 40MHz Clock
   */
-  pinMode(5,OUTPUT);
-  pinMode(19,OUTPUT);
-  digitalWrite(5,HIGH);
-  digitalWrite(19,HIGH);
+  pinMode(22,OUTPUT);
+  pinMode(23,OUTPUT);
+  digitalWrite(22,HIGH);
+  digitalWrite(23,HIGH);
   Serial.begin(9600);
-   if(writeRegister(0x42, 0x12, 0x80, 5, 19, 500)){
+   if(writeRegister(0x42, 0x12, 0x80, 22, 23, 500)){
         Serial.println("The register was succesfully overrote");
       }else{
         Serial.println("There was an error during the writing process");
         }
    Serial.print("Valor del registro: ");
-   Serial.println(readRegister(0x43, 0x12, 5, 19, 500));
+   Serial.println(readRegister(0x43, 0x12, 22, 23, 500));
   }
 
 void loop(){
-  
+
   }
