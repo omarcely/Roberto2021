@@ -13,18 +13,18 @@ void setup(){
   pinMode(22,OUTPUT);
   pinMode(23,OUTPUT);
   pinMode(15,OUTPUT);
-  
+
   digitalWrite(22,HIGH);
   digitalWrite(23,HIGH);
   digitalWrite(15,HIGH);
   Serial.begin(9600);
-   if(writeRegister(0x42, 0x12, 0x80, 22, 23, 500)){
+   if(writeRegister(0x42, 0x12, 0x80, 22, 23, 100)){
         Serial.println("The register was succesfully overrote");
       }else{
         Serial.println("There was an error during the writing process");
         }
    Serial.print("Valor del registro: ");
-   Serial.println(readRegister(0x43, 0x12, 22, 23, 500));
+   Serial.println(readRegister(0x43, 0x12, 22, 23, 100));
   }
 
 void loop(){
