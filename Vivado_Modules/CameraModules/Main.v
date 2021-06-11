@@ -1,11 +1,11 @@
 
-module Main(o_Tx, o_Frame_Indicator, o_led, o_XLK, i_D,  i_PLK, i_Clk, i_VS, i_HS, i_RX);
+module Main(o_Tx, o_Frame_Indicator, o_led, o_XLK, i_D,  i_PLK, Clk, i_VS, i_HS, i_RX);
 
 input [7:0]i_D;
 output o_XLK, o_Tx;
 output reg o_Frame_Indicator;
 output [1:0]o_led;
-input i_PLK, i_Clk, i_VS, i_HS, i_RX;
+input i_PLK, Clk, i_VS, i_HS, i_RX;
 
 ///////Define finite states
 localparam Waiting = 2'b00;
@@ -48,11 +48,11 @@ ReadImage Image (o_XLK,
                  w_Enable_Write,
                  i_D,
                  i_PLK,
-                 i_Clk,
+                 Clk,
                  i_VS,
                  i_HS);
 
-Tx Transmiter(i_Clk,
+Tx Transmiter(Clk,
               r_Enable_Tx,
               w_RAM_Output,
               o_led[0],
@@ -60,7 +60,7 @@ Tx Transmiter(i_Clk,
               o_led[1]);
 
 
-  always @(posedge i_Clk) begin
+  always @(posedge Clk) begin
 
     r_Current_State <= r_Next_State;
 
