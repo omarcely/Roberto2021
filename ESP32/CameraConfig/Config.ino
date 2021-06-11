@@ -4,7 +4,7 @@ void setup(){
   /*Before using the code make sure you have connected the following pins of the Camera:
     Camera SCL to Microcontroler SCL pin
     Camera SDA to Microcontroler SDA pin
-    Camera RET to Logic High
+    Camera RET to ESP32 Reset control pin
     Camera PWDN to GND
     Camera 3V3 to 3,3 Volts
     Camera GND to GND
