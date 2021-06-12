@@ -11,8 +11,8 @@ import keyboard as k
 
 
 try:
-    w=4 #width of the image
-    h=3 #height of the image 
+    w=64 #width of the image
+    h=48 #height of the image 
     ser = serial.Serial("COM4",115200)
     time.sleep(1)
     pixels = np.zeros((h,w,3),dtype=np.uint8)  #it is possible to convert into unsigned integer since the instantiation of the array
