@@ -69,7 +69,10 @@ Tx Transmiter(Clk,
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
 
-        if(i_VS==0)begin
+        if(i_VS==0)begin     //////Todo el condicional está mal pensado, ya que la señal de VS dura apenas unos 10ms, tiempo que no alcanza para recibir y enviar el frame, hay que pensar toda la máquina de estados de nuevo
+          value:
+          default: ;
+        endcase
           r_Next_State <= Waiting;
           r_Current_Clock_Count <= 1'b0;
           o_Frame_Indicator <= 1'b1;
@@ -99,7 +102,7 @@ Tx Transmiter(Clk,
           r_Read_Adress <= r_Read_Adress;
         end
         else begin
-          if (r_Current_Clock_Count <  ClockCountsPerBit) begin
+          if (r_Current_Clock_Count <  ClockCountsPerByte) begin
             r_Current_Clock_Count <= r_Current_Clock_Count + 1;
             r_Enable_Tx <= 1'b0;
             r_Next_State <= SendingBytes;
