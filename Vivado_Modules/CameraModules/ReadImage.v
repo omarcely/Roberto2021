@@ -25,6 +25,7 @@ assign o_XLK = s_Clock_Value;
       end
     end
 
+
     always @(posedge i_PLK) begin
       o_RAM_Adress <= s_Current_Register;
       o_to_RAM <= i_D;
