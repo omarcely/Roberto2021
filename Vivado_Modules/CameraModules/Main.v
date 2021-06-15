@@ -65,8 +65,8 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
 
   always @(posedge Clk) begin
 
-    PLK_Current_Value <= i_PLK;
-    PLK_Previous_Value <=  PLK_Current_Value;
+    VS_Current_Value <= i_VS;
+    VS_Previous_Value <=  VS_Current_Value;
 
     case(r_Current_State)
       Waiting: begin
@@ -131,7 +131,7 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
             end else begin
               r_Current_Clock_Count <= 0;
               r_Enable_Tx <= 1'b0;
-              r_Next_State <= BytesWereSended;
+              r_Next_State <= WaitAfterSending;
               r_Read_Adress <= 1'b0;
             end
 

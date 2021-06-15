@@ -9,7 +9,7 @@ set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33 } [get_ports { Clk }]
 create_clock -add -name sys_clk_pin -period 8.00 -waveform {0 4} [get_ports { Clk }];
 
 #It's just a Test
-#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets i_PLK_IBUF];
+#set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets {i_PLK_IBUF}];
 
 ##Switches
 #set_property -dict { PACKAGE_PIN G15   IOSTANDARD LVCMOS33 } [get_ports { sw[0] }]; #IO_L19N_T3_VREF_35 Sch=sw[0]
@@ -141,14 +141,13 @@ set_property -dict { PACKAGE_PIN T15   IOSTANDARD LVCMOS33     } [get_ports { o_
 set_property -dict { PACKAGE_PIN P14   IOSTANDARD LVCMOS33     } [get_ports { o_XLK }]; #IO_L6P_T0_34 Sch=jd_p[2]
 set_property -dict { PACKAGE_PIN R14   IOSTANDARD LVCMOS33     } [get_ports { i_HS }]; #IO_L6N_T0_VREF_34 Sch=jd_n[2]
 set_property -dict { PACKAGE_PIN U14   IOSTANDARD LVCMOS33     } [get_ports { i_VS }]; #IO_L11P_T1_SRCC_34 Sch=jd_p[3]
-set_property -dict { PACKAGE_PIN U15   IOSTANDARD LVCMOS33     } [get_ports { i_PLK }]; #IO_L11N_T1_SRCC_34 Sch=jd_n[3]
-#set_property -dict { PACKAGE_PIN V17   IOSTANDARD LVCMOS33     } [get_ports { jd[6] }]; #IO_L21P_T3_DQS_34 Sch=jd_p[4]
+#set_property -dict { PACKAGE_PIN U15   IOSTANDARD LVCMOS33     } [get_ports { jd[5] }]; #IO_L11N_T1_SRCC_34 Sch=jd_n[3]
+set_property -dict { PACKAGE_PIN V17   IOSTANDARD LVCMOS33     } [get_ports { i_PLK }]; #IO_L21P_T3_DQS_34 Sch=jd_p[4]
 #set_property -dict { PACKAGE_PIN V18   IOSTANDARD LVCMOS33     } [get_ports { jd[7] }]; #IO_L21N_T3_DQS_34 Sch=jd_n[4]
 
 
 ##Pmod Header JE
 set_property -dict { PACKAGE_PIN V12   IOSTANDARD LVCMOS33 } [get_ports { o_Frame_Indicator }]; #IO_L4P_T0_34 Sch=je[1]
-#set_property -dict { PACKAGE_PIN W16   IOSTANDARD LVCMOS33 } [get_ports { je[1] }]; #IO_L18N_T2_34 Sch=je[2]
 #set_property -dict { PACKAGE_PIN J15   IOSTANDARD LVCMOS33 } [get_ports { je[2] }]; #IO_25_35 Sch=je[3]
 #set_property -dict { PACKAGE_PIN H15   IOSTANDARD LVCMOS33 } [get_ports { je[3] }]; #IO_L19P_T3_35 Sch=je[4]
 #set_property -dict { PACKAGE_PIN V13   IOSTANDARD LVCMOS33 } [get_ports { je[4] }]; #IO_L3N_T0_DQS_34 Sch=je[7]

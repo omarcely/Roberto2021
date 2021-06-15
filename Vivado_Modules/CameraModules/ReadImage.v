@@ -20,7 +20,7 @@ assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
 
     always @(posedge i_Clk) begin
 
-      PLK_Current_Value <= i_PLK;
+      PLK_Current_Value <=  i_PLK;
       PLK_Previous_Value <=  PLK_Current_Value;
 
       if (s_Clock_Count <4) begin
