@@ -9,8 +9,9 @@ input i_PLK, Clk, i_VS, i_HS, i_RX;
 
 ///////Define finite states
 localparam Waiting = 2'b00;
-localparam SendingBytes = 2'b01;
-localparam BytesWereSended = 2'b10;
+localparam WaitBeforeSending = 2'b01;
+localparam SendingBytes = 2'b10;
+localparam WaitAfterSending = 2'b11;
 
 ////Define Number of Bytes
 localparam  ClockCountsPerBit = 1085;
@@ -31,7 +32,8 @@ reg [25:0] r_Current_Clock_Count = 0;    /////// [14:0]
 
 reg [1:0]r_Current_State = Waiting;
 reg [1:0]r_Next_State = Waiting;
-
+reg VS_Current_Value = 1'b0;
+reg VS_Previous_Value = 1'b0;
 
 
 RAM20k RAM (w_RAM_Output,
@@ -59,37 +61,50 @@ Tx Transmiter(Clk,
               o_Tx,
               o_led[1]);
 
+assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
 
   always @(posedge Clk) begin
 
-    r_Current_State <= r_Next_State;
+    PLK_Current_Value <= i_PLK;
+    PLK_Previous_Value <=  PLK_Current_Value;
 
     case(r_Current_State)
       Waiting: begin
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
 
-        if(i_VS==0)begin     //////Todo el condicional está mal pensado, ya que la señal de VS dura apenas unos 10ms, tiempo que no alcanza para recibir y enviar el frame, hay que pensar toda la máquina de estados de nuevo
-          value:
-          default: ;
-        endcase
+        if(VS_Posedge==0)begin
           r_Next_State <= Waiting;
           r_Current_Clock_Count <= 1'b0;
           o_Frame_Indicator <= 1'b1;
         end
         else begin
-          if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
-            r_Current_Clock_Count <= r_Current_Clock_Count + 1;
-            r_Next_State = Waiting;
-            o_Frame_Indicator <= 1'b0;
-          end else begin
-            r_Current_Clock_Count <= 1'b0;
-            r_Next_State = SendingBytes;
-            o_Frame_Indicator <= 1'b0;
-          end
+          r_Next_State <= WaitBeforeSending;
+          r_Current_Clock_Count <= 1'b0;
+          o_Frame_Indicator <= 1'b0;
         end
 
       end ///End of Waiting
+
+
+
+
+      WaitBeforeSending: begin
+        r_Enable_Tx <= 1'b0;
+        r_Read_Adress <= 1'b0;
+
+        if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
+          r_Current_Clock_Count <= r_Current_Clock_Count + 1;
+          r_Next_State = WaitBeforeSending;
+          o_Frame_Indicator <= 1'b0;
+        end else begin
+          r_Current_Clock_Count <= 1'b0;
+          r_Next_State = SendingBytes;
+          o_Frame_Indicator <= 1'b0;
+        end
+      end ///End of WaitBeforeSending
+
+
 
 
       SendingBytes: begin
@@ -108,7 +123,7 @@ Tx Transmiter(Clk,
             r_Next_State <= SendingBytes;
             r_Read_Adress <= r_Read_Adress;
           end else begin
-            if (r_Read_Adress < BytesPerFrame) begin
+            if (r_Read_Adress < BytesPerFrame -1) begin
               r_Current_Clock_Count <= 0;
               r_Enable_Tx <= 1'b0;
               r_Next_State <= SendingBytes;
@@ -125,25 +140,25 @@ Tx Transmiter(Clk,
       end  ///End of SendingBytes
 
 
-      BytesWereSended: begin
+
+      WaitAfterSending: begin
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
 
-        if(r_Current_Clock_Count < ClockCountsForControlSignal)begin
-          r_Next_State <= BytesWereSended;
+        if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
           r_Current_Clock_Count <= r_Current_Clock_Count + 1;
-          o_Frame_Indicator <= 0;
-        end
-        else begin
+          r_Next_State = WaitAfterSending;
+          o_Frame_Indicator <= 1'b0;
+        end else begin
           r_Current_Clock_Count <= 1'b0;
-          r_Next_State <= Waiting;
-          o_Frame_Indicator <= 1;
+          r_Next_State = Waiting;
+          o_Frame_Indicator <= 1'b0;
         end
-      end ///End of BytesWereSended
+      end ///End of WaitAfterSending
 
     endcase
 
-
+    r_Current_State <= r_Next_State;
   end
 
 
