@@ -42,7 +42,7 @@ RAM20k RAM (w_RAM_Output,
             w_RAM_Input,
             w_Enable_Read,
             w_Enable_Write,
-            i_PLK);
+            Clk);
 
 ReadImage Image (o_XLK,
                  w_RAM_Input,

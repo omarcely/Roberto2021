@@ -31,11 +31,10 @@ assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
         s_Clock_Value <= ~s_Clock_Value;
       end
 
+      o_RAM_Adress <= s_Current_Register;
+      o_to_RAM <= i_D;
 
       if (PLK_Posedge) begin
-        o_RAM_Adress <= s_Current_Register;
-        o_to_RAM <= i_D;
-
         if(i_VS == 1'b0) begin
           if (i_HS == 1'b1) begin
             o_RAM_Write_Enable <= 1'b1;
@@ -50,6 +49,11 @@ assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
           o_RAM_Write_Enable <= 1'b0;
           s_Current_Register <= 0;
         end
+      end
+
+      else begin
+        o_RAM_Write_Enable <= 1'b0;
+        s_Current_Register <= s_Current_Register;
       end
     end
 
