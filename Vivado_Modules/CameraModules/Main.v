@@ -23,7 +23,7 @@ wire w_Enable_Read;
 wire [7:0] w_RAM_Input;
 wire [7:0] w_RAM_Output;
 wire [14:0] w_Write_Adress;
-wire r_Enable_Write;
+wire w_Enable_Write;
 
 
 reg r_Enable_Tx = 0;
