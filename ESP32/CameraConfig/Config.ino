@@ -52,26 +52,26 @@ void setup() {
   pinMode(cntrl,INPUT);
 }
 
-int i=0;
 bool control_in=false;
+bool cntrlNow = HIGH;
+bool cntrlPast = HIGH;
 
 void loop(){
-  if(digitalRead(cntrl) == LOW){ //Only begin to read and print if the control pin has already indicated the begin of the frame
-      if(i==0){
+  cntrlNow = digitalRead(cntrl);
+  if(cntrlNow = LOW && cntrlPast = HIGH){ //Only begin to read and print if the control pin has already indicated the begin of the frame
         if(control_in==false){ //Control variable for only one print of "in"
         Serial.println("in");
         control_in=true;
-        }
-      }
-      if(Serial2.available()){ //Send the information to python just if there is any available in serial port
-        Serial.println(Serial2.read());
-        i++;
-      }
-      if(i==9216){
-        i=0;
-        Serial.println("end");
-        control_in=false;
       }
   }
-  delay(50);
+  if(cntrlNow = LOW && cntrlPast = LOW){
+        if(Serial2.available()){ //Send the information to python just if there is any available in serial port
+        Serial.println(Serial2.read());
+      }
+    }
+  if(cntrNow = HIGH && cntrlPast = LOW){
+        Serial.println("end");
+        control_in=false;
+    }
+  cntrlPast = cntrlNow;
 }
