@@ -19,7 +19,6 @@ localparam ClockCountsPerByte = 11935;   ////Eleven times the number of Clock Co
 localparam BytesPerFrame = 9216;
 localparam  ClockCountsForControlSignal = 62500000;
 
-wire w_Enable_Read;
 wire [7:0] w_RAM_Input;
 wire [7:0] w_RAM_Output;
 wire [14:0] w_Write_Adress;
@@ -40,7 +39,7 @@ RAM20k RAM (w_RAM_Output,
             w_Write_Adress,
             r_Read_Adress,
             w_RAM_Input,
-            w_Enable_Read,
+            1'b1,
             w_Enable_Write,
             Clk);
 
