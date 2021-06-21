@@ -8,6 +8,10 @@
 
 BluetoothSerial SerialBT;
 
+bool control_in=false;
+bool cntrlNow = HIGH;
+bool cntrlPast = HIGH;
+
 void setup() {
     /*Before using the code make sure you have connected the following pins of the Camera:
     Camera SCL to Microcontroler SCL pin
@@ -25,7 +29,7 @@ void setup() {
   digitalWrite(22,HIGH);
   digitalWrite(23,HIGH);
   digitalWrite(15,HIGH);
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   //writeRegister(0x42, 0x12, 0x80, 22, 23, 100)  //Reset register
 
@@ -38,38 +42,28 @@ void setup() {
   writeRegister(0x42, 0x11, 0x9C, 22, 23, 100);  //Framerate CLKRC ~ 1.5fps
 
 
-
-  Serial.println(readRegister(0x43, 0x0C, 22, 23, 100));
-  Serial.println(readRegister(0x43, 0x72, 22, 23, 100));
-  Serial.println(readRegister(0x43, 0x70, 22, 23, 100));
-  Serial.println(readRegister(0x43, 0x71, 22, 23, 100));
-  Serial.println(readRegister(0x43, 0x73, 22, 23, 100));
-  Serial.println(readRegister(0x43, 0xA2, 22, 23, 100));
-  Serial.begin(115200);
   Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
   SerialBT.begin("ESP32test"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
   pinMode(cntrl,INPUT);
 }
 
-bool control_in=false;
-bool cntrlNow = HIGH;
-bool cntrlPast = HIGH;
-
 void loop(){
   cntrlNow = digitalRead(cntrl);
-  if(cntrlNow = LOW && cntrlPast = HIGH){ //Only begin to read and print if the control pin has already indicated the begin of the frame
+  if(cntrlNow == LOW && cntrlPast == HIGH){ //Only begin to read and print if the control pin has already indicated the begin of the frame
         if(control_in==false){ //Control variable for only one print of "in"
         Serial.println("in");
         control_in=true;
       }
   }
-  if(cntrlNow = LOW && cntrlPast = LOW){
+  if(cntrlNow == LOW && cntrlPast == LOW){
+      for(i=0;i<9216;i++){
         if(Serial2.available()){ //Send the information to python just if there is any available in serial port
-        Serial.println(Serial2.read());
+        Serial.println(Serial2.read()+"\r\n");
+        }
       }
     }
-  if(cntrNow = HIGH && cntrlPast = LOW){
+  if(cntrNow == HIGH && cntrlPast == LOW){
         Serial.println("end");
         control_in=false;
     }
