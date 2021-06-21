@@ -46,26 +46,24 @@ void setup() {
   SerialBT.begin("ESP32test"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
   pinMode(cntrl,INPUT);
+
+  delay(10000);
 }
 
 void loop(){
   cntrlNow = digitalRead(cntrl);
   if(cntrlNow == LOW && cntrlPast == HIGH){ //Only begin to read and print if the control pin has already indicated the begin of the frame
-        if(control_in==false){ //Control variable for only one print of "in"
+
         Serial.println("in");
-        control_in=true;
-      }
-  }
-  if(cntrlNow == LOW && cntrlPast == LOW){
-      for(i=0;i<9216;i++){
-        if(Serial2.available()){ //Send the information to python just if there is any available in serial port
-        Serial.println(Serial2.read()+"\r\n");
+
+        for(int i=0;i<9216;i++){
+          if(Serial2.available()){ //Send the information to python just if there is any available in serial port
+            Serial.println(Serial2.read(), BIN);
+          }
         }
-      }
-    }
-  if(cntrNow == HIGH && cntrlPast == LOW){
+
         Serial.println("end");
-        control_in=false;
-    }
+  }
+
   cntrlPast = cntrlNow;
 }
