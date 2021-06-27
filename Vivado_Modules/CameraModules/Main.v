@@ -15,9 +15,9 @@ localparam WaitAfterSending = 2'b11;
 
 ////Define Number of Bytes
 localparam ClockCountsPerBit = 1085;
-localparam ClockCountsPerByte = 21700;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
-localparam BytesPerFrame = 9216;
-localparam ClockCountsForControlSignal = 1085;
+localparam ClockCountsPerByte = 625010;//1250010;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
+localparam BytesPerFrame = 6144;
+localparam ClockCountsForControlSignal = 108500;
 
 wire [7:0] w_RAM_Input;
 wire [7:0] w_RAM_Output;
@@ -27,12 +27,13 @@ wire w_Enable_Write;
 
 reg r_Enable_Tx = 0;
 reg [14:0] r_Read_Adress = 15'b0;
-reg [14:0] r_Current_Clock_Count = 0;    /////// [14:0]
+reg [20:0] r_Current_Clock_Count = 0;    /////// [14:0]
 
-reg [1:0]r_Current_State = Waiting;
-reg [1:0]r_Next_State = Waiting;
+reg [1:0]r_Current_State = WaitAfterSending;
+reg [1:0]r_Next_State = WaitAfterSending;
 reg VS_Current_Value = 1'b0;
 reg VS_Previous_Value = 1'b0;
+reg r_EnableCameraRead = 1'b1;
 
 
 RAM20k RAM (w_RAM_Output,
@@ -51,7 +52,8 @@ ReadImage Image (o_XLK,
                  i_PLK,
                  Clk,
                  i_VS,
-                 i_HS);
+                 i_HS,
+                 r_EnableCameraRead);
 
 Tx Transmiter(Clk,
               r_Enable_Tx,
@@ -61,6 +63,8 @@ Tx Transmiter(Clk,
               o_led[1]);
 
 assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
+assign VS_Negedge = (~VS_Current_Value) & (VS_Previous_Value);
+
 
   always @(posedge Clk) begin
 
@@ -71,16 +75,19 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
       Waiting: begin
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
+        r_EnableCameraRead <= 1'b1;
 
         if(VS_Posedge==0)begin
           r_Next_State <= Waiting;
           r_Current_Clock_Count <= 1'b0;
           o_Frame_Indicator <= 1'b1;
+          r_EnableCameraRead <= 1'b1;
         end
         else begin
           r_Next_State <= WaitBeforeSending;
           r_Current_Clock_Count <= 1'b0;
           o_Frame_Indicator <= 1'b0;
+          r_EnableCameraRead <= 1'b0;
         end
 
       end ///End of Waiting
@@ -91,6 +98,7 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
       WaitBeforeSending: begin
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
+        r_EnableCameraRead <= 1'b0;
 
         if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
           r_Current_Clock_Count <= r_Current_Clock_Count + 1;
@@ -98,7 +106,7 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
           o_Frame_Indicator <= 1'b0;
         end else begin
           r_Current_Clock_Count <= 1'b0;
-          r_Next_State = SendingBytes;
+          r_Next_State <= SendingBytes;
           o_Frame_Indicator <= 1'b0;
         end
       end ///End of WaitBeforeSending
@@ -108,6 +116,7 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
 
       SendingBytes: begin
         o_Frame_Indicator <= 1'b0;
+        r_EnableCameraRead <= 1'b0;
 
         if(r_Current_Clock_Count <  ClockCountsPerBit) begin
           r_Current_Clock_Count <= r_Current_Clock_Count + 1;
@@ -143,21 +152,23 @@ assign VS_Posedge = VS_Current_Value & (~VS_Previous_Value);
       WaitAfterSending: begin
         r_Enable_Tx <= 1'b0;
         r_Read_Adress <= 1'b0;
+        r_EnableCameraRead <= 1'b0;
+        r_Current_Clock_Count <= 1'b0;
 
-        if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
-          r_Current_Clock_Count <= r_Current_Clock_Count + 1;
-          r_Next_State = WaitAfterSending;
+        if (VS_Negedge == 1'b0) begin
+          r_Next_State <= WaitAfterSending;
           o_Frame_Indicator <= 1'b0;
         end else begin
-          r_Current_Clock_Count <= 1'b0;
-          r_Next_State = Waiting;
+          r_Next_State <= Waiting;
           o_Frame_Indicator <= 1'b0;
         end
       end ///End of WaitAfterSending
 
     endcase
+  end
 
-    r_Current_State <= r_Next_State;
+  always @(negedge Clk) begin
+        r_Current_State <= r_Next_State;
   end
 
 

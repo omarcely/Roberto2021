@@ -8,9 +8,9 @@
 
 BluetoothSerial SerialBT;
 
-bool control_in=false;
-bool cntrlNow = HIGH;
-bool cntrlPast = HIGH;
+bool cntrlNow = LOW;
+bool cntrlPast = LOW;
+bool Reading = false;
 
 void setup() {
     /*Before using the code make sure you have connected the following pins of the Camera:
@@ -29,41 +29,61 @@ void setup() {
   digitalWrite(22,HIGH);
   digitalWrite(23,HIGH);
   digitalWrite(15,HIGH);
-  Serial.begin(115200);
 
-  //writeRegister(0x42, 0x12, 0x80, 22, 23, 100)  //Reset register
-
+  writeRegister(0x42, 0x12, 0x80, 22, 23, 100);  //Reset register
+  delay(1000);
   writeRegister(0x42, 0x0C, 0x0C, 22, 23, 100);  //Enable Digital Zoom and Down Sampling
   writeRegister(0x42, 0x72, 0x33, 22, 23, 100);  //Set horizontal and vertical downsampling of 8
   writeRegister(0x42, 0x70, 0x28, 22, 23, 100);  //Set Scaling XSC
-  writeRegister(0x42, 0x71, 0x28, 22, 23, 100); //Set Scaling YSC
+  writeRegister(0x42, 0x71, 0x28, 22, 23, 100);  //Set Scaling YSC
   writeRegister(0x42, 0x73, 0x03, 22, 23, 100);  //Set PCLK divide by 8
-  writeRegister(0x42, 0xA2, 0x09, 22, 23, 100);  //Scaling Delay
+  writeRegister(0x42, 0xA2, 0x0C, 22, 23, 100);  //Scaling Delay lo cambiamos hace poquito, era 0x09
   writeRegister(0x42, 0x11, 0x9C, 22, 23, 100);  //Framerate CLKRC ~ 1.5fps
 
+  writeRegister(0x42, 0x12, 0x04, 22, 23, 100); ///Allow RGB555 COM7
+  writeRegister(0x42, 0x40, 0xF0, 22, 23, 100); ///RGB555 COM15
 
-  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+
+
+
   SerialBT.begin("ESP32test"); //Bluetooth device name
-  Serial.println("The device started, now you can pair it with bluetooth!");
   pinMode(cntrl,INPUT);
 
-  delay(10000);
+  delay(3000);
+
+  Serial.begin(115200);
+  Serial2.begin(115200, SERIAL_8N1, RXD2, TXD2);
+  DeleteSerial();
 }
 
 void loop(){
+/*
+  if(Serial2.available()>0){
+    Serial.println(Serial2.read());
+    }*/
   cntrlNow = digitalRead(cntrl);
-  if(cntrlNow == LOW && cntrlPast == HIGH){ //Only begin to read and print if the control pin has already indicated the begin of the frame
 
-        Serial.println("in");
+  if (Reading && Serial2.available()){
+      Serial.println(Serial2.read());
+    }else if(cntrlNow == LOW && cntrlPast == HIGH){
+      DeleteSerial();
+      Serial.println("in");
 
-        for(int i=0;i<9216;i++){
-          if(Serial2.available()){ //Send the information to python just if there is any available in serial port
-            Serial.println(Serial2.read(), BIN);
-          }
-        }
+      Reading = true;
+    }else if(Reading && cntrlNow == HIGH && cntrlPast == LOW){
+      delay(4);
+      Serial.println(Serial2.read());
+      Serial.println("end");
+      Reading = false;
+    }
 
-        Serial.println("end");
-  }
+    cntrlPast = cntrlNow;
 
-  cntrlPast = cntrlNow;
 }
+
+
+void DeleteSerial(){
+    while(Serial2.available()){
+          Serial2.read();
+        }
+  }
