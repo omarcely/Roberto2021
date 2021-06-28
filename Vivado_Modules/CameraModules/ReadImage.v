@@ -33,27 +33,10 @@ assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
       o_to_RAM <= i_D;
       //o_to_RAM <= o_RAM_Adress[12:5] + 1;//////////Esto nos lo sacamos del ojete
 
-      if (PLK_Posedge == 1'b1) begin
-        if((i_VS == 1'b0) && (i_EnableCameraRead == 1'b1)) begin
-          if (i_HS == 1'b1) begin
-            o_RAM_Write_Enable <= 1'b1;
-            o_RAM_Adress <= o_RAM_Adress+1;
-          end
-          else begin
-            o_RAM_Write_Enable <= 1'b0;
-            o_RAM_Adress <= o_RAM_Adress;
-          end
-        end
-        else begin
-          o_RAM_Write_Enable <= 1'b0;
-          o_RAM_Adress <= 0;
-        end
-      end
 
-      else begin
-        o_RAM_Write_Enable <= 1'b0;
-        o_RAM_Adress <= o_RAM_Adress;
-      end
+      
+
+
     end
 
 
