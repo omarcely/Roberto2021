@@ -71,8 +71,8 @@ void loop(){
 
       Reading = true;
     }else if(Reading && cntrlNow == HIGH && cntrlPast == LOW){
-      delay(4);
-      Serial.println(Serial2.read());
+      //delay(4);
+      //Serial.println(Serial2.read());
       Serial.println("end");
       Reading = false;
     }
