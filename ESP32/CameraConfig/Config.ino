@@ -37,7 +37,7 @@ void setup() {
   writeRegister(0x42, 0x70, 0x28, 22, 23, 100);  //Set Scaling XSC
   writeRegister(0x42, 0x71, 0x28, 22, 23, 100);  //Set Scaling YSC
   writeRegister(0x42, 0x73, 0x03, 22, 23, 100);  //Set PCLK divide by 8
-  writeRegister(0x42, 0xA2, 0x0C, 22, 23, 100);  //Scaling Delay lo cambiamos hace poquito, era 0x09
+  writeRegister(0x42, 0xA2, 0x09, 22, 23, 100);  //Scaling Delay lo cambiamos hace poquito, era 0x09  0x0c
   writeRegister(0x42, 0x11, 0x9C, 22, 23, 100);  //Framerate CLKRC ~ 1.5fps
 
   writeRegister(0x42, 0x12, 0x04, 22, 23, 100); ///Allow RGB555 COM7
@@ -71,8 +71,6 @@ void loop(){
 
       Reading = true;
     }else if(Reading && cntrlNow == HIGH && cntrlPast == LOW){
-      //delay(4);
-      //Serial.println(Serial2.read());
       Serial.println("end");
       Reading = false;
     }
