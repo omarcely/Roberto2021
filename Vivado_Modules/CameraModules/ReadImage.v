@@ -16,6 +16,7 @@ reg PLK_Previous_Value = 1'b0;
 
 assign o_XLK = s_Clock_Value;
 assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
+assign PLK_Negedge = (~PLK_Current_Value) & PLK_Previous_Value;
 
     always @(posedge i_Clk) begin
 
@@ -30,14 +31,36 @@ assign PLK_Posedge = PLK_Current_Value & (~PLK_Previous_Value);
         s_Clock_Value <= ~s_Clock_Value;
       end
 
-      o_to_RAM <= i_D;
-      //o_to_RAM <= o_RAM_Adress[12:5] + 1;//////////Esto nos lo sacamos del ojete
+      if (i_VS == 1'b0) begin
+        if((i_EnableCameraRead == 1'b1) && (i_HS == 1'b1)) begin
+          if(PLK_Posedge == 1'b1) begin
+            o_RAM_Write_Enable <= 1'b1;
+          end
+          else begin
+            o_RAM_Write_Enable <= 1'b0;
+          end
 
-
-      
-
-
+          if(PLK_Negedge == 1'b1) begin
+            o_RAM_Adress <= o_RAM_Adress+1;
+          end
+          else begin
+            o_RAM_Adress <= o_RAM_Adress;
+          end
+        end
+        else begin
+          o_RAM_Adress <= o_RAM_Adress;
+          o_RAM_Write_Enable <= 1'b0;
+        end
+      end
+      else begin
+        o_RAM_Write_Enable <= 1'b0;
+        o_RAM_Adress <= 0;
+      end
     end
 
+    always @(negedge i_Clk) begin
+        //o_to_RAM <= i_D;
+        o_to_RAM <= o_RAM_Adress[12:5]+1;//////////Esto nos lo sacamos del ojete
+    end
 
 endmodule
