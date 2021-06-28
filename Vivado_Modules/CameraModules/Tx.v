@@ -10,7 +10,7 @@ output reg  o_Tx_Serial;
 output      o_Tx_Done;
 
 parameter s_IDLE         = 3'b000;
-parameter CLKS_PER_BIT   = 1085;//434;
+parameter CLKS_PER_BIT   = 1085;
 parameter s_TX_START_BIT = 3'b001;
 parameter s_TX_DATA_BITS = 3'b010;
 parameter s_TX_STOP_BIT  = 3'b011;

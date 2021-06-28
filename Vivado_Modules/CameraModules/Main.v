@@ -15,9 +15,9 @@ localparam WaitAfterSending = 2'b11;
 
 ////Define Number of Bytes
 localparam ClockCountsPerBit = 1085;
-localparam ClockCountsPerByte = 625010;//1250010;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
+localparam ClockCountsPerByte = 62510;//1250010;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
 localparam BytesPerFrame = 6144;
-localparam ClockCountsForControlSignal = 108500;
+localparam ClockCountsForControlSignal = 62500;
 
 wire [7:0] w_RAM_Input;
 wire [7:0] w_RAM_Output;
@@ -26,7 +26,7 @@ wire w_Enable_Write;
 
 
 reg r_Enable_Tx = 0;
-reg [14:0] r_Read_Adress = 15'b0;
+reg [14:0] r_Read_Adress = 0;
 reg [20:0] r_Current_Clock_Count = 0;    /////// [14:0]
 
 reg [1:0]r_Current_State = WaitAfterSending;
@@ -74,7 +74,7 @@ assign VS_Negedge = (~VS_Current_Value) & (VS_Previous_Value);
     case(r_Current_State)
       Waiting: begin
         r_Enable_Tx <= 1'b0;
-        r_Read_Adress <= 1'b0;
+        r_Read_Adress <= 0;
         r_EnableCameraRead <= 1'b1;
 
         if(VS_Posedge==0)begin
@@ -97,7 +97,7 @@ assign VS_Negedge = (~VS_Current_Value) & (VS_Previous_Value);
 
       WaitBeforeSending: begin
         r_Enable_Tx <= 1'b0;
-        r_Read_Adress <= 1'b0;
+        r_Read_Adress <= 0;
         r_EnableCameraRead <= 1'b0;
 
         if (r_Current_Clock_Count < ClockCountsForControlSignal) begin
@@ -140,7 +140,7 @@ assign VS_Negedge = (~VS_Current_Value) & (VS_Previous_Value);
               r_Current_Clock_Count <= 0;
               r_Enable_Tx <= 1'b0;
               r_Next_State <= WaitAfterSending;
-              r_Read_Adress <= 1'b0;
+              r_Read_Adress <= 0;
             end
 
           end
@@ -151,7 +151,7 @@ assign VS_Negedge = (~VS_Current_Value) & (VS_Previous_Value);
 
       WaitAfterSending: begin
         r_Enable_Tx <= 1'b0;
-        r_Read_Adress <= 1'b0;
+        r_Read_Adress <= 0;
         r_EnableCameraRead <= 1'b0;
         r_Current_Clock_Count <= 1'b0;
 
