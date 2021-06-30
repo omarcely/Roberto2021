@@ -60,7 +60,7 @@ assign PLK_Negedge = (~PLK_Current_Value) & PLK_Previous_Value;
 
     always @(negedge i_Clk) begin
         o_to_RAM <= i_D;
-        //o_to_RAM <= o_RAM_Adress[12:5];//////////For troubleshooting only
+        //o_to_RAM <= o_RAM_Adress[13:6];//////////Esto nos lo sacamos del ojete
     end
 
 endmodule

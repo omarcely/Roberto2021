@@ -33,12 +33,13 @@ void setup() {
   writeRegister(0x42, 0x12, 0x80, 22, 23, 100);  //Reset register
   delay(1000);
   writeRegister(0x42, 0x0C, 0x0C, 22, 23, 100);  //Enable Digital Zoom and Down Sampling
-  writeRegister(0x42, 0x72, 0x33, 22, 23, 100);  //Set horizontal and vertical downsampling of 8
-  writeRegister(0x42, 0x70, 0x28, 22, 23, 100);  //Set Scaling XSC
-  writeRegister(0x42, 0x71, 0x28, 22, 23, 100);  //Set Scaling YSC
-  writeRegister(0x42, 0x73, 0x03, 22, 23, 100);  //Set PCLK divide by 8
-  writeRegister(0x42, 0xA2, 0x09, 22, 23, 100);  //Scaling Delay lo cambiamos hace poquito, era 0x09  0x0c
-  writeRegister(0x42, 0x11, 0x9C, 22, 23, 100);  //Framerate CLKRC ~ 1.5fps
+  writeRegister(0x42, 0x72, 0x22, 22, 23, 100);  //Set horizontal and vertical downsampling of 8
+  writeRegister(0x42, 0x70, 0x3A, 22, 23, 100);  //Set Scaling XSC
+  writeRegister(0x42, 0x71, 0x35, 22, 23, 100);  //Set Scaling YSC
+  writeRegister(0x42, 0x73, 0xF2, 22, 23, 100);  //Set PCLK divide by 8
+  writeRegister(0x42, 0xA2, 0x2A, 22, 23, 100);  //Scaling Delay lo cambiamos hace poquito, era 0x09  0x0c
+  writeRegister(0x42, 0x11, 0x01, 22, 23, 100);  //Framerate CLKRC ~ 1.5fps
+  writeRegister(0x42, 0x3E, 0x12, 22, 23, 100);
 
   writeRegister(0x42, 0x12, 0x04, 22, 23, 100); ///Allow RGB555 COM7
   writeRegister(0x42, 0x40, 0xF0, 22, 23, 100); ///RGB555 COM15

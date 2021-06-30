@@ -16,8 +16,8 @@ localparam WaitAfterSending = 2'b11;
 ////Define Number of Bytes
 localparam ClockCountsPerBit = 1085;
 localparam ClockCountsPerByte = 62510;//1250010;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
-localparam BytesPerFrame = 6144;
-localparam ClockCountsForControlSignal = 125000;
+localparam BytesPerFrame = 12672;//6144;
+localparam ClockCountsForControlSignal = 250000;
 
 wire [7:0] w_RAM_Input;
 wire [7:0] w_RAM_Output;
@@ -27,7 +27,7 @@ wire w_Enable_Write;
 
 reg r_Enable_Tx = 0;
 reg [14:0] r_Read_Adress = 0;
-reg [20:0] r_Current_Clock_Count = 0;    /////// [14:0]
+reg [17:0] r_Current_Clock_Count = 0;    /////// [14:0]
 
 reg [1:0]r_Current_State = WaitAfterSending;
 reg [1:0]r_Next_State = WaitAfterSending;
