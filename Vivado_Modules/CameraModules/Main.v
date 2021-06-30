@@ -16,7 +16,7 @@ localparam WaitAfterSending = 2'b11;
 ////Define Number of Bytes
 localparam ClockCountsPerBit = 1085;
 localparam ClockCountsPerByte = 62510;//1250010;   ////Eleven times the number of Clock Counts Per Bit (10 for the bytes an one wxtra for the microcontroller to detect the change of Byte)
-localparam BytesPerFrame = 12672;//6144;
+localparam BytesPerFrame = 11376;//6144;
 localparam ClockCountsForControlSignal = 250000;
 
 wire [7:0] w_RAM_Input;
