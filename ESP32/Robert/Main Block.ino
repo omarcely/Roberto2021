@@ -12,13 +12,13 @@
 #define TXD2 17
 
 //Output H-Bridge
-#define EA 13
-#define S1 12
-#define S2 14
+#define EA 25
+#define S1 26
+#define S2 27
 
-#define EB 25
-#define S3 27
-#define S4 26
+#define EB 13 
+#define S3 14
+#define S4 12
 
 
 int distance[3] = {0, 0, 0}; //distance[0] = uts_1 (Left); distance[1] = uts_2 (Front); distance[2] = uts_3 (Right);  
