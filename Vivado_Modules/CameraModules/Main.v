@@ -1,8 +1,9 @@
-module Main(o_Tx, i_Frame_Indicator, o_led, o_XLK, i_D,  i_PLK, Clk, i_VS, i_HS);
+module Main(o_Tx, i_Frame_Indicator, o_led, o_XLK,o_led_state,i_D,  i_PLK, Clk, i_VS, i_HS);
 
 input [7:0]i_D;
 output o_XLK, o_Tx;
 output [1:0]o_led;
+output reg [1:0]o_led_state=2'b00;
 input i_PLK, Clk, i_VS, i_HS, i_Frame_Indicator;
 
 ///////Define finite states
@@ -18,7 +19,8 @@ wire [7:0] w_RAM_Output;
 wire [14:0] w_Write_Adress;
 wire [14:0] w_Read_Adress;
 wire w_Enable_Write;
-wire w_recognition_done;
+wire w_Enable_Read;
+wire [0:0]w_recognition_done;
 wire [7:0]w_colorOfFrame;
 
 
@@ -29,9 +31,10 @@ reg VS_Current_Value = 1'b0;
 reg VS_Previous_Value = 1'b0;
 reg FI_Current_Value = 1'b0;
 reg FI_Previous_Value = 1'b0;
-reg r_EnableCameraRead = 1'b1;
-reg r_EnableRecognition = 1'b0;
+reg r_EnableCameraRead = 1'b0;
+reg [0:0]r_EnableRecognition = 1'b0;
 reg availableForFrame = 1'b0;
+reg [2:0]r_count_for_sending = 1'b0;
 
 RAM20k RAM (w_RAM_Output,
             w_Write_Adress,
@@ -63,7 +66,7 @@ ColorRecognition Color(w_colorOfFrame,
                        w_Read_Adress,
                        w_recognition_done,
                        r_EnableRecognition,
-                       W_RAM_Output,
+                       w_RAM_Output,
                        BytesPerFrame, 
                        Clk);
 
@@ -85,6 +88,9 @@ assign FI_Negedge = (~FI_Current_Value) & FI_Previous_Value;
         r_Enable_Tx <= 1'b0;
         r_EnableCameraRead <= 1'b1;
         r_EnableRecognition <= 1'b0;
+        availableForFrame <= 1'b0;
+        o_led_state[0] <= 1'b1;
+        o_led_state[1] <= 1'b0;
         if(VS_Posedge==0)begin
           r_Next_State <= LoadIntoRAM;
           r_EnableCameraRead <= 1'b1;
@@ -100,12 +106,12 @@ assign FI_Negedge = (~FI_Current_Value) & FI_Previous_Value;
         r_Enable_Tx <= 1'b0;
         r_EnableCameraRead <= 1'b0;
         r_EnableRecognition <= 1'b1;
-        if(w_recognition_done == 1)begin
+        o_led_state[0] <= 1'b0;
+        o_led_state[1] <= 1'b1;
+        if(w_recognition_done == 1'b1)begin
             r_Next_State <= SendingInfo;
-            r_EnableRecognition <= 1'b0;
         end else begin
             r_Next_State <= Recognition;
-            r_EnableRecognition <= 1'b1;
             end
       end 
 
@@ -114,7 +120,14 @@ assign FI_Negedge = (~FI_Current_Value) & FI_Previous_Value;
         r_EnableCameraRead <= 1'b0;
         r_EnableRecognition <= 1'b0;
         r_Enable_Tx <= 1'b1;
-        r_Next_State <= WaitForCapture;
+        o_led_state[0] <= 1'b1;
+        o_led_state[1] <= 1'b1;
+        if(r_count_for_sending == 3'd5)begin
+            r_Next_State <= WaitForCapture;
+            r_count_for_sending <= 0;
+        end else begin
+                r_count_for_sending <= r_count_for_sending +1;
+            end
       end  
 
 
@@ -122,9 +135,11 @@ assign FI_Negedge = (~FI_Current_Value) & FI_Previous_Value;
         r_Enable_Tx <= 1'b0;
         r_EnableCameraRead <= 1'b0;
         r_EnableRecognition <= 1'b0;
+        o_led_state[0] <= 1'b0;
+        o_led_state[1] <= 1'b0;
         if(FI_Posedge == 1'b1)begin
             availableForFrame = 1'b1;
-        end
+        end 
         if (VS_Negedge == 1'b1 & availableForFrame == 1'b1) begin
           r_Next_State <= LoadIntoRAM;
         end else begin
