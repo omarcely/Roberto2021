@@ -19,7 +19,7 @@ assign enableMod = i_enable;
 always@(negedge i_clk) begin
     FrameInfo <= i_RAMinfo;
     if(enableMod == 1'b1)begin
-        o_done = 1'b0;
+        o_done <= 1'b0;
         if(o_RAM_adress < i_BytesPerFrame)begin
             if(o_RAM_adress % 2 == 0)begin
                 red <= FrameInfo[6:2];
@@ -37,14 +37,26 @@ always@(negedge i_clk) begin
                 end
         end else begin
             o_RAM_adress <= 0;
-            if(r_totalRed > r_totalGreen && r_totalRed > r_totalBlue)begin
-                o_color <= 8'b00000001;
+            if(r_totalRed > r_totalGreen & r_totalRed > r_totalBlue)begin
+                if((5100 > r_totalRed - r_totalGreen) & (5100 > r_totalRed - r_totalBlue))begin
+                    o_color <= 8'b00000100;
+                end else begin
+                    o_color <= 8'b00000001;
+                end
             end
-            if(r_totalGreen > r_totalRed && r_totalGreen > r_totalBlue)begin
-                o_color <= 8'b00000010;
+            if(r_totalGreen > r_totalRed & r_totalGreen > r_totalBlue)begin
+                if((5100> r_totalGreen - r_totalRed) & (5100> r_totalGreen - r_totalBlue))begin
+                    o_color <= 8'b00000100;
+                end else begin
+                    o_color <= 8'b00000010;
+                end 
             end
-            if(r_totalBlue > r_totalGreen && r_totalBlue > r_totalRed)begin
-                o_color <= 8'b00000011;
+            if(r_totalBlue > r_totalGreen & r_totalBlue > r_totalRed)begin
+                if((5100> r_totalBlue - r_totalGreen) & (5100> r_totalBlue - r_totalRed))begin
+                    o_color <= 8'b00000100;
+                end else begin
+                    o_color <= 8'b00000011;
+                end 
             end
             o_done <= 1'b1;
             r_totalRed = 1'b0;
