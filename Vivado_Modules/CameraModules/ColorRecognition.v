@@ -38,35 +38,35 @@ always@(negedge i_clk) begin
         end else begin
             o_RAM_adress <= 0;
             if(r_totalRed > r_totalGreen & r_totalRed > r_totalBlue)begin
-                if((5100 > r_totalRed - r_totalGreen) & (5100 > r_totalRed - r_totalBlue))begin
+                if((4100 > r_totalRed - r_totalGreen) & (4100 > r_totalRed - r_totalBlue))begin
                     o_color <= 8'b00000100;
                 end else begin
                     o_color <= 8'b00000001;
                 end
             end
             if(r_totalGreen > r_totalRed & r_totalGreen > r_totalBlue)begin
-                if((5100> r_totalGreen - r_totalRed) & (5100> r_totalGreen - r_totalBlue))begin
+                if((4100> r_totalGreen - r_totalRed) & (4100> r_totalGreen - r_totalBlue))begin
                     o_color <= 8'b00000100;
                 end else begin
                     o_color <= 8'b00000010;
                 end 
             end
             if(r_totalBlue > r_totalGreen & r_totalBlue > r_totalRed)begin
-                if((5100> r_totalBlue - r_totalGreen) & (5100> r_totalBlue - r_totalRed))begin
+                if((4100> r_totalBlue - r_totalGreen) & (4100> r_totalBlue - r_totalRed))begin
                     o_color <= 8'b00000100;
                 end else begin
                     o_color <= 8'b00000011;
                 end 
             end
             o_done <= 1'b1;
-            r_totalRed = 1'b0;
-            r_totalGreen = 1'b0;
-            r_totalBlue = 1'b0;
-            red = 1'b0;
-            green1 = 1'b0;
-            green2 = 1'b0;
-            green = 1'b0;
-            blue = 1'b0; 
+            r_totalRed = 0;
+            r_totalGreen = 0;
+            r_totalBlue = 0;
+            red = 0;
+            green1 = 0;
+            green2 = 0;
+            green = 0;
+            blue = 0; 
         end
     end
 end  
