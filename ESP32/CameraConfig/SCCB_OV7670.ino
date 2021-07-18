@@ -1,21 +1,16 @@
 
 byte readRegister(byte IdAdress, byte SubAdress, int SCL, int SDA, int Delay){
-    //Serial.println("Read Transmission:");
     byte Message[2] = {IdAdress-1,SubAdress};
     ////////////////Two Phases write Transmission///////////////////
     startTransmission(SCL, SDA, Delay);
-
     for (int phase = 1; phase <3; phase++){
           if (!writeByte(Message[phase - 1], SCL, SDA, Delay)){
             }
       }
-
      stopTransmission(SCL,SDA,Delay);
      ////////////////Two Phases read Transmission///////////////////
      startTransmission(SCL, SDA, Delay);
-
      writeByte(IdAdress, SCL, SDA, Delay);
-
      byte ReadedData = readByte(SCL, SDA, Delay);
      stopTransmission(SCL, SDA, Delay);
      return ReadedData;
@@ -25,18 +20,14 @@ byte readRegister(byte IdAdress, byte SubAdress, int SCL, int SDA, int Delay){
 
 
 bool writeRegister(byte IdAdress, byte SubAdress, byte InputValue, int SCL, int SDA, int Delay){
-     //Serial.println("Write Transmission:");
      bool writingWasPerfect = true;
-
      byte Message[3] = {IdAdress,SubAdress, InputValue};
-
      startTransmission(SCL, SDA, Delay);
      for (int phase = 1; phase <4; phase++){
           if (!writeByte(Message[phase - 1], SCL, SDA, Delay)){
               writingWasPerfect = false;
             }
       }
-
       stopTransmission(SCL,SDA,Delay);
       return writingWasPerfect;
   }
