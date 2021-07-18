@@ -7,10 +7,10 @@ output reg [1:0]o_led_state=2'b00;
 input i_PLK, Clk, i_VS, i_HS, i_Frame_Indicator;
 
 ///////Define finite states
-localparam LoadIntoRAM = 2'b00;
-localparam Recognition = 2'b01;
-localparam SendingInfo = 2'b10;
-localparam WaitForCapture = 2'b11;
+localparam WaitForCapture = 2'b00;
+localparam LoadIntoRAM = 2'b01;
+localparam Recognition = 2'b10;
+localparam SendingInfo = 2'b11;
 
 localparam BytesPerFrame = 11376;//6144;
 
