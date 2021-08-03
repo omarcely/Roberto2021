@@ -1,5 +1,5 @@
 #include "BluetoothSerial.h"
-
+#include <HCSR04.h>
 //Ultrasonic
 #define uts_1 34
 #define uts_2 35
@@ -22,14 +22,19 @@
 
 
 double distance[3] = {0, 0, 0}; //distance[0] = uts_1 (Left); distance[1] = uts_2 (Front); distance[2] = uts_3 (Right);  
-double correctDistance = 13;
+HCSR04 hc(trigger,new int[3]{uts_1,uts_2,uts_3},3);
+double correctDistance = 12;
+double lastDistanceFront=50;
+double frontdiff = 50;
+double diff = 0;
+int count = 0;
 int S[4] = {S1,S2,S3,S4}; // Outputs H-Bridge
 int EN[2] = {EA, EB}; //Enable to each Motor
-int topSpeed = 950; int minimumSpeed = 900;
-int topSpeedB = 925;
+int topSpeed = 905; int minimumSpeed = 900;
+int topSpeedB = 900;
 int dutyCycle[2] = {topSpeed, topSpeedB};
 char r;
-int lastTurn = -1; // -1 left, 1 right;
+int lastTurn = 1; // -1 left, 1 right;
 boolean sendToPhy = false;
 boolean done = false;
 
@@ -128,22 +133,25 @@ void loop() {
         sendToPhy = true;
       }else if(r == 's'){
         sendToPhy = false;
+        count = 0;
       }else{
         sendToPhy = sendToPhy;
       }
   }
   if(sendToPhy){
         
-      distance[0] = readUltrasonic(trigger,uts_1);
-      delay(15);
-      distance[1] = readUltrasonic(trigger,uts_2);
-      delay(15); 
-      distance[2] = readUltrasonic(trigger,uts_3);
-      delay(15);
-      if((distance[1]<21) &&(distance[1]!= 0)){
+      distance[0] = hc.dist(0);
+      delay(5);
+      distance[1] = hc.dist(1);
+      delay(5); 
+      distance[2] = hc.dist(2);
+      delay(5);
+      frontdiff = lastDistanceFront-distance[1];
+      delayMicroseconds(5);
+      lastDistanceFront = distance[1];
+      if((distance[1]<20) &&(distance[1]!= 0) && (frontdiff < 25)){
 
           //The car has stopped and sends the control signal.
-          SerialBT.println(distance[1]);
           dutyCycle[0] = 0;
           dutyCycle[1] = 0;
           ledcWrite(0,dutyCycle[1]);
@@ -183,66 +191,69 @@ void loop() {
           }
 
           //Make the turn.
-          if((distance[0]<30) & (distance[2]<30)){
-              dutyCycle[0] = 0;
+          if((distance[0]<20) & (distance[2]<20)){
+              dutyCycle[0] = topSpeed;
               dutyCycle[1] = topSpeedB;
-              SerialBT.println('l');
               ledcWrite(0,dutyCycle[1]);
               ledcWrite(1,dutyCycle[0]); 
-              lastTurn = -1;
-              delay(1000); 
-          }else if(distance[0]>=35){
+              lastTurn = lastTurn;
+              delay(850); 
+          }else if((distance[0]>=20) && (distance[0] > distance[2])){
               dutyCycle[0] = 0;
-              dutyCycle[1] = topSpeedB;
+              dutyCycle[1] = topSpeedB+124;
               SerialBT.println('l');    
               ledcWrite(0,dutyCycle[1]);
               ledcWrite(1,dutyCycle[0]); 
               lastTurn = -1;
-              delay(1000);  
+              delay(800);  
+              distance[1] = hc.dist(1);
           }else{
-              dutyCycle[0] = topSpeed;
+              dutyCycle[0] = topSpeed+105;
               dutyCycle[1] = 0;
               SerialBT.println('r');  
               ledcWrite(0,dutyCycle[1]);
               ledcWrite(1,dutyCycle[0]); 
               lastTurn = 1;
-              delay(800); 
+              delay(820); 
+              distance[1] = hc.dist(1);
           }
 
 
    
-      }else if((distance[0]<60) || (distance[2]<60)){
+      }else if((distance[0]<50) || (distance[2]<50)){
       //Forward 
           SerialBT.println(distance[1]);
           if(lastTurn == -1){
-            currentDistance = distance[2];
-          }else{
-            currentDistance = distance[0];
-          }
-          double diff = correctDistance - currentDistance;
-          Serial.println(diff);
-          if((13> diff) && (diff >3.5)){
-              dutyCycle[0] = topSpeed + (min(0,lastTurn)*270);
-              dutyCycle[1] = topSpeedB - (max(0,lastTurn)*270);
-              delay(2);
+            currentDistance = hc.dist(2);
+            }else if(lastTurn == 1){
+            currentDistance = hc.dist(0);
+              }
+          delayMicroseconds(10);
+          diff = correctDistance - currentDistance;
+          if((diff < 10)&&(diff > 0.5) && count == 80){
+            dutyCycle[0] = topSpeed + (max(0,lastTurn)*50)+(min(0,lastTurn)*50);
+            dutyCycle[1] = topSpeedB - (min(0,lastTurn)*40) - (max(0,lastTurn)*50);
+            delay(1);
+            ledcWrite(0,dutyCycle[1]);
+            ledcWrite(1,dutyCycle[0]); 
+            }else if((-10 < diff) &&(diff < -0.5) && count == 80){
+              dutyCycle[0] = topSpeed - (min(0,lastTurn)*50) - (max(0,lastTurn)*50);
+              dutyCycle[1] = topSpeedB + (max(0,lastTurn)*40) + (min(0,lastTurn)*50);
+              delay(1);
               ledcWrite(0,dutyCycle[1]);
               ledcWrite(1,dutyCycle[0]); 
-              delay(2);
-          }else if((-10 <diff) && (diff<-3.5)){
-              dutyCycle[0] = topSpeed - (max(0,lastTurn)*200);
-              dutyCycle[1] = topSpeedB + (min(0,lastTurn)*270);
-              delay(2);
-              ledcWrite(0,dutyCycle[1]);
-              ledcWrite(1,dutyCycle[0]);
-              delay(2); 
-          }else{
+              }else{
                 dutyCycle[0] = topSpeed;
                 dutyCycle[1] = topSpeedB;
-                delay(2);
+                delay(1);
                 ledcWrite(0,dutyCycle[1]);
                 ledcWrite(1,dutyCycle[0]); 
-                delay(2);
-          }
+                if(count == 80){
+                  count = count; 
+                  }else{
+                    count = count + 1;
+                    }
+                }
       }else{
           //Stop the car.
           dutyCycle[0] = 0;
@@ -262,12 +273,3 @@ void loop() {
   }
       
 }
-
-double readUltrasonic(int trig, int echo){
-  digitalWrite(trig, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  return pulseIn(echo, HIGH)* 0.01716;
- }
