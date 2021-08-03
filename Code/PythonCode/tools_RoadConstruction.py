@@ -3,7 +3,7 @@ import serial
 import time
 import keyboard
 
-ser = serial.Serial('COM7',9600)
+ser = serial.Serial('COM7',115200)
     
 def start():
     stop = True
