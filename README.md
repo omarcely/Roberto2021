@@ -18,11 +18,21 @@ As you might notice, this branch contains 4 folders: Code, ChasisDesign, General
 
 Contains the code used in the final implementation of the Vehicle. This is the only folder requiered in order to replicate the device and have similar results.
 
-
 ### ChasisDesign 
 
 Due to the huge size of the ZyboZ7, our team made a custom design of the vehicle's chassis in order to assemble all the components. The design files can be found on this folder.
 
 ### GeneralInformation
 
-Contains 
+Have some PDFs with documentation about the OV7670 as well as a report in Spanish with a full description of all the design and test process.
+
+### Tests
+
+Some of the previous versions of source code were gathered together into this folder. Here you can find folders with the code for: 
+<ul>
+  <li> Reading and reconstructing an image from the camera in a python code. </li>
+  <li> Reading an image and sending the color of the figure to a python script.</li>
+  <li> Drawing a road on a Python script using test data from a microcontroller. </li>
+  <li> Testing the UART modules of the FPGA with a microcontroller.</li>
+</ul>
+
