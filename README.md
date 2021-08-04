@@ -6,7 +6,7 @@ This branch contains the source code and design files of a Maze Reconstructing V
 
 The block diagram used during the design process was the following:
 
-![imagen](https://user-images.githubusercontent.com/43284148/127947274-287353dc-3962-42ef-bf0f-09f01c565810.png)
+![Documento de mierda](https://user-images.githubusercontent.com/43284148/128103514-d38c02cc-d4bb-449f-b161-06a21d6219ce.png)
 
 
 
