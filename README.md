@@ -17,7 +17,7 @@ As you might notice, this branch contains 4 folders: Code, ChasisDesign, General
 
 ### Code
 
-Contains the code used in the final implementation of the Vehicle. This is the only folder requiered in order to replicate the device and have similar results.
+Contains the code used in the final implementation of the vehicle. This is the only folder requiered in order to replicate the device and have similar results.
 
 ### ChasisDesign 
 
