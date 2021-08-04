@@ -25,7 +25,7 @@ Due to the huge size of the ZyboZ7, our team made a custom design of the vehicle
 
 ### GeneralInformation
 
-Have some PDFs with documentation about the OV7670 as well as a report in Spanish with a full description of all the design and test process.
+Has some PDFs with documentation about the OV7670 as well as a report in Spanish with a full description of all the design and test process.
 
 ### Tests
 
