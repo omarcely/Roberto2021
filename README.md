@@ -9,7 +9,16 @@ The block diagram used during the design process was:
 ![Diagrama HW-SW](https://user-images.githubusercontent.com/43284148/128103636-0667f414-3cb7-49fc-acc7-628538e66948.png)
 
 
+## Some Results
 
+### Image Capture Hardware Module
+
+![Selfie](https://github.com/ocely/Roberto2021/blob/FinalPresentation/Tests/ImageCapture/PhotoTest.png)
+Picture of the vehicle captured by its camera module
+
+### Maze reconstruction
+
+![Selfie](https://github.com/ocely/Roberto2021/blob/FinalPresentation/Tests/RoadConstruction/Result.png)
 
 ## General Considerations
 
