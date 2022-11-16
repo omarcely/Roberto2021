@@ -14,11 +14,16 @@ The block diagram used during the design process was:
 ### Image Capture Hardware Module
 
 ![Selfie](https://github.com/ocely/Roberto2021/blob/FinalPresentation/Tests/ImageCapture/PhotoTest.png)
-Picture of the vehicle captured by its camera module
+
+
+Picture of the vehicle captured by its camera module.
 
 ### Maze reconstruction
 
 ![Selfie](https://github.com/ocely/Roberto2021/blob/FinalPresentation/Tests/RoadConstruction/Result.png)
+
+
+Image of an explored maze constructed with *turtle* python library.
 
 ## General Considerations
 
